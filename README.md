@@ -4,6 +4,7 @@ Algorithm Project
 Run Requirements.ipynb before starting
 
 Run Main.py to start the program
+
 DNT All_Functions.py 
 
 
