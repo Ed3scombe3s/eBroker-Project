@@ -4,6 +4,8 @@ Algorithm Project
 Run Requirements.ipynb before starting
 
 Run Main.py to start the program
+DNT All_Functions.py 
+
 
 It will creat 2 new files users.txt and users_portfolio.csv
 
