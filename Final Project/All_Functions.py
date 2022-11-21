@@ -126,7 +126,8 @@ def Balance(user):
         reader = csv.reader(file)
         for row in reader:
             if row[0] == user:
-                print(f"Balance is: {row[1]}")
+                row[1] = float(row[1])
+                print(f"Balance is: {row[1]:.2f}")
                 global balance
                 balance = row[1]
                 balance = float(balance)
@@ -139,11 +140,16 @@ def Opened_Position(user):
             if row[0] == user:
                 global postion_opened
                 if row[2] == "Yes":
-                    print("You have an opened position")
+                    print(f"You have an opened {row[6].upper()} position")
                     print(f"Stock Ticker: {row[3]}")
                     print(f"Shares: {row[4]}")
                     print(f"Open Price: {row[5]}")
-                    print(f"Type: {row[6]}")
+
+                    ticker = row[3]
+                    price = get_live_price(ticker)
+                    print(f"{ticker}'s Current price: {price}")
+
+                    
                     postion_opened = True
                 else:
                     postion_opened = False
@@ -178,6 +184,30 @@ def Open_Position(user):
         print("Invalid option!")
         time.sleep(1)
         Open_Position(user)
+
+
+def Current_PNL(user):
+    with open('users_portfolio.csv', 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            if row[0] == user:
+                if row[2] == "Yes":
+                    ticker = row[3]
+                    price = get_live_price(ticker)
+                    shares = row[4]
+                    open_price = row[5]
+                    type = row[6]
+                    shares = float(shares)
+                    open_price = float(open_price)
+                    price = float(price)
+                    if type == "long":
+                        PNL = (price - open_price) * shares
+                        print(f"Current PnL: {PNL:.2f}\n")
+                    elif type == "short":
+                        PNL = (open_price - price) * shares
+                        print(f"Current PnL: {PNL:.2f}\n")
+                else:
+                    print("\n")
 
 
 def Open_a_pos(balance, user):
@@ -243,11 +273,15 @@ def Portfolio(user):
     #show if user has any open positions
     Opened_Position(user)
 
+    Current_PNL(user)
+
+
     print("1. Open a position")
     print("2. Close current position")
     print("3. Live chart")
-    print("4. Get live price")
+    print("4. Get live stock price")
     print("5. Back to main menu")
+    print("\nPress Enter to refresh")
 
     option = input("Enter your option: ")
     if option == "1":
@@ -274,13 +308,21 @@ def Portfolio(user):
 
     elif option == "4":
         ticker = str(input("Enter the ticker symbol(meta, aapl, msft, tsla, amzn): "))
-        price = get_live_price(ticker)
-        print(f"{ticker}'s Current price: {price}")
-        time.sleep(4)
+        i = 0
+        clear()
+        while  i < 10:
+            price = get_live_price(ticker)
+            print(f"{ticker}'s Current price: {price}")
+            time.sleep(0.5)
+            i += 1
+            
         Portfolio(user)
 
     elif option == "5":
         LoggedIn()
+    
+    elif option == "":
+        Portfolio(user)
     
     else:
         clear()
@@ -331,7 +373,7 @@ def get_market_data():
 
 def plot_market_data(data , ticker):
     #declare figure
-    mpf.plot(data, type='candle', style='yahoo', title=ticker, ylabel='Stock Price (USD per Shares)', volume=True, mav=(200))
+    mpf.plot(data, type='candle', style='yahoo', title=ticker, ylabel='Stock Price (USD per Shares)', volume=True, mav=(2,5))
 
 
 
