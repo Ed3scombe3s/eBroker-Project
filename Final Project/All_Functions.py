@@ -25,8 +25,9 @@ def Current_user(user): # Current user
     with open("users.txt", "r+") as file:
         for line in file:
             login_info = line.split()
-            name = login_info[0].capitalize()
-            current_user = login_info[3]
+            if login_info[3] == user:
+                name = login_info[0].capitalize()
+                current_user = login_info[3]
 
 def clear(): # Clear the screen
     os.system('cls' if os.name == 'nt' else 'clear')
