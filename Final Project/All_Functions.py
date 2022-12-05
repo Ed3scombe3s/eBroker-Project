@@ -104,20 +104,45 @@ def Convert(tup, di):
     for a, b in tup:
         di.setdefault(a, []).append(b)
     return di
-        
+
+# BAD BECAUSE ITS SLOWER THEN QUICKSORT        
+# def sort_by_price(mydict, choice):
+#     d_items = list(mydict.items())
+#     for i in range(len(d_items)):
+#         m_value = d_items[i][1]
+#         for j in range(i+1, len(d_items)):
+#             if choice == "1":
+#                 if d_items[j][1] < m_value:
+#                     m_value = d_items[j][1]
+#                     d_items[i], d_items[j] = d_items[j], d_items[i]
+#             else:
+#                 if d_items[j][1] > m_value:
+#                     m_value = d_items[j][1]
+#                     d_items[i], d_items[j] = d_items[j], d_items[i]
+#     return d_items
+
 def sort_by_price(mydict, choice):
+    def quicksort(arr, low, high):
+        if low < high:
+            pivot = partition(arr, low, high)
+            quicksort(arr, low, pivot - 1)
+            quicksort(arr, pivot + 1, high)
+
+    def partition(arr, low, high):
+        pivot = arr[high][1]
+        i = low
+        for j in range(low, high):
+            if choice == "1" and arr[j][1] < pivot:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+            elif choice != "1" and arr[j][1] > pivot:
+                arr[i], arr[j] = arr[j], arr[i]
+                i += 1
+        arr[i], arr[high] = arr[high], arr[i]
+        return i
+
     d_items = list(mydict.items())
-    for i in range(len(d_items)):
-        m_value = d_items[i][1]
-        for j in range(i+1, len(d_items)):
-            if choice == "1":
-                if d_items[j][1] < m_value:
-                    m_value = d_items[j][1]
-                    d_items[i], d_items[j] = d_items[j], d_items[i]
-            else:
-                if d_items[j][1] > m_value:
-                    m_value = d_items[j][1]
-                    d_items[i], d_items[j] = d_items[j], d_items[i]
+    quicksort(d_items, 0, len(d_items) - 1)
     return d_items
 
 
